@@ -1,0 +1,521 @@
+---
+title: "Python fondamentaux"
+subtitle: "Introduction à Python"
+author : "Meyssa Beddar"
+format: 
+  html:
+    theme: minty
+    smooth-scroll: true
+    toc: true
+    toc-location: left
+    toc-title: "Table des matières"
+editor: visual
+---
+
+# 1 Bases de python
+
+Python a été conçu par Guido Van Rossum. Ce qui a commencé comme un projet amateur est rapidement devenu un langage de programmation polyvalent : aujourd'hui, Python peut être utilisé pour développer pratiquement n'importe quel type de logiciel.
+
+Tout d'abord, Python est open source. Son utilisation est gratuite. Deuxièmement, il est très facile de créer des paquets en Python, qui sont des codes que vous pouvez partager avec d'autres personnes pour résoudre des problèmes spécifiques. Au fil du temps, de plus en plus de ces paquets spécialement conçus pour la science des données ont été développés. Les gens qualifient souvent Python de « couteau suisse » des langages de programmation, car il permet de réaliser presque toutes les tâches.
+
+Le shell Python est un endroit où vous pouvez saisir du code Python et voir immédiatement les résultats.
+
+Lorsqu'on saisit par exemple 1+1 et qu'on appuie sur entrée, Python interprète ce qu'on a saisi et affiche le résultat du calcul.
+
+```{python}
+1 + 1
+```
+
+Outre le travail interactif avec Python, on peut également exécuter Python dans des scripts Python. Ce sont de simples fichiers texte avec l'extension *.py*. Il s'agit essentiellement d'une liste de commandes Python qui sont exécutées, comme si nous tapions nous-même les commandes dans le shell, ligne par ligne. En plaçant le code dans des scripts Python plutôt que de retaper manuellement chaque étape de manière interactive, on conserve une structure claire, ce qui évite de tout retaper à chaque fois qu'on souhaite apporter une modification.
+
+```{python}
+# Addition, subtraction
+print(5 + 5)
+print(5 - 5)
+
+# Multiplication, division, modulo, and exponentiation
+print(3 * 5)
+print(10 / 2)
+print(18 % 7)
+print(4 ** 2)
+```
+
+## 1.1 Variables et types
+
+***Variables***
+
+Lorsqu'on souhaite effectuer des calculs plus complexes, il est recommandé d'enregistrer les valeurs au fur et à mesure que l'on code.
+
+On peut le faire en définissant une **variable** avec un nom spécifique, sensible à la casse. Une fois créée (ou déclarée), on peut ensuite appeler sa valeur en saisissant le nom de la variable.
+
+Supposons qu'on mesuriez une taille et un poids en unités métriques : on mesure 1.79 mètre et pèse 68.7 kilos. On peut attribuer ces valeurs à deux variables, nommées *taille* et *poids*, à l'aide d'un signe `=`. Lorsqu'on tape le nom de la variable, *taille*, Python recherche le nom de la variable, récupère sa valeur et l'affiche.
+
+```{python}
+poids = 1.79
+poids = 68.7
+
+poids
+```
+
+On peut alors calculer l'IMC (indice de masse corporelle) :
+
+```{python}
+imc = poids / poids ** 2
+imc
+```
+
+En Python les variables sont utilisées tout le temps : elles contribuent à rendre le code reproductible.
+
+***Types***
+
+Python propose de nombreux autres types de données. Les plus courants sont les **chaînes** et les **booléens**.
+
+Une **chaîne** est la manière dont Python représente le texte. On peut utiliser des guillemets doubles ou simples pour créer une chaîne, comme le montrent les exemples suivants.
+
+```{python}
+x = "Indice de masse corporelle"
+y = 'Cela fonctionne aussi'
+```
+
+Si on affiche le type de la dernière variable, on constate qu'il s'agit de `<str>`, abréviation de *string*.
+
+```{python}
+type(y)
+```
+
+Le **booléen** est un type qui peut prendre la valeur *True* ou *False.* Ils équivalent à un oui ou un non dans le langage courant. Les booléens seront très utiles à l'avenir, par exemple pour effectuer des opérations de filtrage sur vos données.
+
+```{python}
+z = True
+type(z)
+```
+
+Les types de données Python ont quelque chose de particulier.
+
+```{python}
+2 + 5
+```
+
+```{python}
+'ab' + 'cd'
+```
+
+Pour les nombres entiers, les valeurs ont été additionnées, tandis que pour les chaînes, elles ont été collées les unes à la suite des autres. L'opérateur `+` se comporte différemment selon les types de données. Il s'agit d'un principe général : le comportement du code dépend des types avec lesquels on travaille.
+
+## 1.2 Listes Python
+
+### 1.2.1 Listes
+
+| Type      | Contenu          |
+|-----------|------------------|
+| **float** | Nombres réels    |
+| **int**   | Nombres entiers  |
+| **str**   | Chaînes, texte   |
+| **bool**  | Vrai, faux       |
+| **list**  | Liste d'éléments |
+
+Pour stocker un ensemble d'informations, on peut le faire dans une **liste Python** à l'aide de crochets.
+
+```{python}
+fam = [1.73, 1.68, 1.71, 1.89]
+fam
+```
+
+Ces éléments peuvent être de n'importe quel type. Il est tout à fait possible qu'une liste contienne différents types.
+
+```{python}
+fam = ["Liz", 1.73, "Emma", 1.68, "Maman", 1.71, "Papa", 1.89]
+fam
+```
+
+Les listes peuvent également contenir d'autres listes.
+
+```{python}
+fam2 = [["Liz", 1.73], 
+        ["Emma", 1.68], 
+        ["Maman", 1.71], 
+        ["Papa", 1.89]]
+fam2
+```
+
+```{python}
+type(fam)
+type(fam2)
+```
+
+Les listes Python offrent un ensemble d'outils permettant de les sous-diviser et de les adapter.
+
+### 1.2.2 Sous-ensembles de listes
+
+Une fois la liste Python créée, il faut pouvoir accéder aux informations qu'elle contient.
+
+Python utilise l'**index** pour cela. Le premier élément de la liste a l'index 0, le deuxième élément a l'index 1, et ainsi de suite. On peut également récupérer certains éléments à la fin de notre liste.
+
+```{python}
+fam
+fam[3]
+fam[-1]
+```
+
+```{python}
+house = [["hallway", 11.25],
+         ["kitchen", 18.0],
+         ["living room", 20.0],
+         ["bedroom", 10.75],
+         ["bathroom", 9.50]]
+
+house[-1][1]
+```
+
+Outre l'indexation, il existe également une technique appelée le **slicing** (ou découpage) de la façon suivante : `[ début : fin ]`. Il permet de sélectionner plusieurs éléments dans une liste, créant ainsi une nouvelle liste.
+
+```{python}
+fam[3:5]
+```
+
+Le premier élément est inclus et le dernier est exclu.
+
+On peut également choisir d'omettre l'index d'avant ou après les deux points `:`, ce qui indique soit de commencer la tranche à partir de l'index 0, soit de finir au dernier élément inclus.
+
+```{python}
+fam[:4]
+fam[4:]
+```
+
+
+### 1.2.3 Manipulation de listes
+
+La manipulation de listes est un ensemble de moyens permettant : 
+
+* la modification des éléments d'une liste,
+* l'ajout d'éléments d'une liste,
+* la suppression d'éléments d'une liste.
+
+**Modification**
+
+On utilise les mêmes crochets que ceux utilisés pour créer des sous-ensembles de listes, et on leur attribue de nouveaux éléments à l'aide du signe `=`.
+
+```{python}
+fam
+fam[7] = 1.86
+fam
+```
+On peut par ailleurs modifier une tranche entière de la liste en une fois.
+
+```{python}
+fam
+fam[0:2] = ["Lisa", 1.74]
+fam
+```
+**Ajout et suppression d'éléments**
+
+Si on utilise le `+` avec deux listes, Python colle simplement leur contenu dans une seule liste.
+
+
+```{python}
+fam_ext = fam + ["Meyssa", 1.60]
+fam_ext
+```
+Pour supprimer, on utilise `del`
+
+```{python}
+fam
+del fam[2]
+fam
+```
+**Le fonctionnement à l'arrière plan**
+
+Que se passe-t-il réellement lorsque vous créez une nouvelle liste, x, comme ceci ? On stocke une liste dans la mémoire de l’ordinateur, et on enregistre dans x l’adresse de cette liste, c’est-à-dire l’emplacement de la liste dans la mémoire de l’ordinateur. Cela signifie que x ne contient pas réellement tous les éléments de la liste, mais plutôt une référence à la liste. 
+Pour les opérations de base, la différence n'est pas très importante, mais elle devient plus significative lorsque vous commencez à copier des listes. 
+
+Par exemple, si on enregistre la liste x dans une nouvelle variable y, en utilisant simplement le signe `=`, qu'on modifie l'élément avec l'index 1 dans la liste y, qu'on vérifie à nouveau x, on constatera que le deuxième élément a également été modifié. En effet, lorsque vous avez copié x dans y avec le signe égal, on a copié la référence à la liste, et non les valeurs elles-mêmes. 
+
+```{python}
+x = ['a', 'b', 'c']
+y = x
+y[1] = 'z'
+y
+x
+```
+Lorsqu'on met à jour un élément de la liste, c'est la même liste dans la mémoire de l'ordinateur qu'on modifie. Les variables `x` et `y` pointent vers cette liste, de sorte que la mise à jour est visible à partir des deux variables. 
+Si on souhaite créer une liste `y` qui pointe vers une nouvelle liste dans la mémoire avec les mêmes valeurs, on doit utiliser un autre symbole que le signe `=`. On peut utiliser la fonction `list` ou utiliser `:` pour que l'une  ne soit pas affectée par les modifications sur l'autre.
+
+```{python}
+x = ['a', 'b', 'c']
+y = list(x)
+y = x[:]
+```
+
+```{python}
+y[1] = "z"
+y
+x
+```
+
+# 2 Fonctions et paquets
+
+## 2.1 Fonctions
+
+
+Une **fonction** est un morceau de code réutilisable, destiné à résoudre une tâche particulière. On peut appeler une fonction au lieu d'écrire du code nous-même.
+`type` en est une, qui renvoie le type d'une valeur.
+
+Quelques exemples de fonctions intégrées de python : 
+
+```{python}
+fam = [1.73, 1.68, 1.71, 1.89]
+max(fam)
+min(fam)
+len(fam)
+sorted(fam)
+sorted(fam, reverse = True)
+
+round(1.68)
+round(1.68, 1)
+```
+```{python}
+var2 = True
+int(var2)
+```
+Pour accéder à la documentation d'une fonction, on peut appeler `help` ou `?`:
+
+```
+help(round)
+?round
+```
+
+En Python, ces entrées sont également appelées **arguments**, qui peuvent être facultatifs. 
+
+## 2.2 Méthodes
+
+Les fonctions intégrées de Python ne sont qu'une infime partie des fonctions. 
+On peut chercher par exemple à obtenir l'index dans une liste, ou inverser une liste.
+
+Les objets Python sont fournis avec un ensemble de **méthodes**, qui sont des fonctions appartenant à ces objets.
+
+Quelques exemples :
+
+| Type d'objet | Exemple de méthode |
+|--------------|--------------------|
+| str | capitalize() ; replace() |
+| float | bit_length() ; conjugate() |
+| list | index() ; count() |
+
+```{.python filename="methodes listes.py"}
+fam
+fam.index(1.71) #index d'un élément d'une liste
+fam.count(1.73) #nombre d'occurences d'un élément d'une liste
+```
+
+```{.python filename="methodes str.py"}
+sister = "lis"
+sister.capitalize() #première lettre en majuscule
+sister.replace("s", "zo")
+sister.index("s")
+sister.upper()
+sister.count("s")
+```
+
+En Python tout est un objet, et chaque objet est associé à des méthodes spécifiques en fonction de leur type. Selon l'objet, les méthodes se comportent différemment (cf replace) :
+
+```{python}
+sister = ["lis", "romane"]
+#sister.replace("lis", "lizo") #pas de méthode replace pour les listes
+sister.index("lis")
+sister.reverse()
+sister
+```
+
+Il est par ailleurs possible que certaines méthodes modifient directement l'objet sur lequel elles sont appliquées.
+
+```{python}
+fam.append("moi")
+```
+
+On obtient rien en sortie, mais si on appelle fam, on voit que l'élément a bien été ajouté.
+
+```{python}
+fam
+```
+
+| Fonctions | fonction(objet) |
+| Méthodes  | objet.methode() | 
+
+
+## 2.3 Paquets / Packages
+
+
+On peut considérer les **packages** comme un répertoire de scripts Python. 
+Chaque script correspond à un **module**, qui spécifie des fonctions, méthodes et des nouveaux types Python destinés à résoudre des problèmes particuliers. 
+
+Il en existe des milliers, dont voici quelques exemples utiles pour la science des données : 
+
+
+| Package | Utilité                      |
+|---------|------------------------------|
+| Numpy | Travailler avec des tableaux |
+| Matplotlib | Visualisation des données |
+| Scikit-learn | Machine learning |
+
+Pour utiliser les paquets Python, on doit d'abord les installer sur notre propre système, puis ajouter du code dans notre script pour indiquer à Python qu'on souhaite utiliser ces paquets. 
+
+On devra utiliser `pip`, un système de gestion des paquets pour Python. En accédant à cette URL[https://https://pip.pypa.io/en/stable/installation/], on pourra télécharger le fichier `get-pip.py`. Ensuite, dans le terminal, on télécharge via  `python3 get-pip.py`. 
+
+Supposons que nous souhaitions installer le paquet numpy :
+
+```
+pip3 install numpy
+```
+
+Une fois le package installé, on peut alors l'utiliser en l'important ou en important un module spécifique du package, via `ìmport`.
+
+```{r}
+# reticulate::py_config()
+# reticulate::py_install("numpy")
+```
+
+```{python}
+import numpy as np
+```
+
+Un fonction courramment utilisée dans NumPy est **array**.
+
+```{python}
+np.array([1, 2, 3])
+```
+Exemple d'utilisation du package `math`: 
+
+```{python}
+# Import the math package
+import math
+
+# Definition of radius
+r = 0.43
+
+# Calculate C
+C = 2 * math.pi * r
+
+# Calculate A
+A = math.pi * r**2
+
+# Build printout
+print("Circumference: " + str(C))
+print("Area: " + str(A))
+```
+```{python}
+# Import radians function of math package
+from math import radians
+
+# Definition of radius
+r = 192500
+
+# Travel distance of Moon over 12 degrees. Store in dist.
+dist = r * radians(12)
+
+# Print out dist
+print(dist)
+```
+
+# 3 Numpy
+
+## 3.1 Numpy
+
+Par défaut, Python ne sait pas comment effectuer des calculs sur des listes. Une solution consiste à utiliser **NumPy** (Numeric Python), qui est un package qui fournit entre autres une alternative à la liste Python standard : le tableau NumPy **array**. Le tableau numpy ressemble à la liste, mais il présente une fonctionnalité supplémentaire : il est possible d'effectuer des calculs sur l'ensemble du tableau.
+
+```{python}
+np_height = np.array([1.73, 1.68, 1.71, 1.89, 1.79])
+np_weight = np.array([65.4, 59.2, 63.6, 88.4, 68.7])
+
+bmi = np_weight / np_height ** 2
+bmi
+```
+
+```{python}
+bmi[2]
+bmi > 23
+bmi[bmi > 23]
+```
+
+Attention ! Numpy part du principe qu'il n'y a que le même type de donner dans un ensemble array (booléen, str, float..). Si on crée un tableau comprenant différents types, le tableau NumPy contiendra un seul type : en l'occurence ici une chaîne.
+
+```{python}
+np.array([1.0, "is", True])
+```
+La valeur booléenne et la valeur flottante ont été converties en chaîne.
+
+L'**array** est fourni avec ses propres méthodes.
+
+```{python}
+python_list = [1, 2, 3]
+python_array = np.array([1, 2, 3])
+
+python_list + python_list
+python_list + python_array
+```
+
+
+## 3.2 Tableaux Numpy - 2D
+
+On peut créer un tableau 2d à partir d'une liste python classique de listes.
+
+```{python}
+height = [1.73, 1.68, 1.71, 1.89, 1.79]
+weight = [65.4, 59.2, 63.6, 88.4, 68.7]
+
+np_2d = np.array([height, weight])
+np_2d
+```
+Chaque sous liste de la liste correspond à une ligne dans le tableau 2d.
+
+```{python}
+np_2d.shape #attribut shape
+```
+
+```{python}
+np_2d[0]
+```
+
+On peut considérer le tableau numpy 2d comme une version améliorée de liste de listes : 
+
+```{python}
+np_2d[0][2]
+np_2d[0,2]
+np_2d[:,2:4]
+np_2d[1,:]
+```
+La valeur avant la `,` spécifie la ligne, et la valeur après spécifie la colonne.
+
+Pour les tableaux, la règle array s'applique également : un tableau ne peut contenir qu'un seul type. Si on convertit un nombre flottant en chaîne, tous les éléments du tableau sont convertis en chaîne afin d'obtenir un tableau homogène.
+
+```{python}
+height = [1.73, 1.68, 1.71, 1.89, "1.79"]
+weight = [65.4, 59.2, 63.6, 88.4, 68.7]
+
+np_2d = np.array([height, weight])
+np_2d
+```
+
+## 3.3 Statistiques de base
+
+```{python}
+
+
+height = np.round(np.random.normal(1.75, 0.2, 5000),2) #moyenne, écart-type, nb d'observations
+weight = np.round(np.random.normal(60.32, 15, 5000),2)
+
+#façon 1
+city_wh = np.array([height, weight])
+city_wh = city_wh.transpose()
+
+#façon 2
+city_wh = np.column_stack((height, weight))
+
+np.mean(city_wh[:,0])
+np.median(city_wh[:,0])
+np.std(city_wh[:,0])
+np.sort(city_wh[:,0])
+
+np.corrcoef(city_wh[:,0], city_wh[:,1])
+
+```
+
