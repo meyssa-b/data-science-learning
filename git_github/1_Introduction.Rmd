@@ -1,0 +1,465 @@
+---
+title: "Principes de bases de Git"
+subtitle: "Introduction à Git"
+author : "Meyssa Beddar"
+output:
+  html_document:
+    code_folding: show
+    theme: flatly
+    toc: true
+    toc_depth: 4
+    toc_float:
+      collapsed: true
+toc-title: Table des matières
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F)
+```
+
+```{r, echo = F}
+chemin_figures = "M:/ArboSSMSI/@Perso/Meyssa Beddar/Datacamp/Git_Github/figures"
+```
+
+
+\newpage
+
+
+# 1 Introduction à Git
+
+## 1.1 Introduction
+
+Le contrôle de version (*versionning*) est un groupe de systèmes et de processus permettant de gérer les modifications apportées aux documents, programmes et répertoires. C'est utile pour tout ce qui change au fil du temps ou doit être partagé, comme le code et les données.
+
+Ainsi, le contrôle de version permet de suivre les fichiers dans différents états et de combiner les différentes versions, identifier une version particulière d'un fichier et annuler les modifications.
+
+Git est open source et évolutif pour suivre facilement les projets en solo ou les efforts collaboratis complexes. 
+L'un des avantages est qu'il permet de comparer le contenu des fichiers à différents moments, examiner quels changements ont été apportés, qui les a effectués et quand.
+
+
+La méthode courante pour utiliser Git est via le shell (ou terminal).
+
+***Quelques commandes***
+
+
+- *pwd* imprime le répertoire de travail actuel afin de voir notre emplacement ;
+
+```{r, eval = F}
+pwd
+```
+
+- *ls* liste les fichiers du répertoire de travail actuel ;
+
+```{r, eval = F}
+ls
+```
+
+
+- *cd* permet de changer de répertoire en indiquant le répertoire dans lequel nous voulons nous déplacer ; 
+
+```{r, eval = F}
+cd
+```
+
+- *git --version* permet de savoir la version de Git installée.
+
+
+```{r, eval = F}
+git --version
+```
+
+## 1.2 Création de dépôts
+
+Pour utiliser *Git*, il faut d'abord créer un dépôt git, souvent appelé ***repo***.
+
+Un dépôt est un répertoire composé de deux parties : 
+
+- la première contient les fichiers et les sous-répertoires que nous créons et modifions^[Exemple : fichiers *funding.doc* et *repord.md*, et un sous-répertoire *data*.] ;
+- la deuxième partie contient les informations supplémentaires que Git enregistre sur l'historique du projet^[Git storage *.git*]. 
+
+La combinaison de ces deux éléments est appelé un *repo.* 
+
+
+Git stocke toutes ces informations supplémentaires dans un répertoire appelé .git, situé dans le répertoire principal du dépôt. 
+
+Git s'attend à ce que ces informations soient présentées d'une manière particulière, il ne faut donc pas modifier ou supprimer ce *.git*.
+
+Si nous hébergeons notre repo dans le cloud, cela permet une collaboration facilitée. 
+
+Pour créer un nouveau dépôt Git pour notre projet, on utilise la commande *git init* dans le terminal, suivi du nom du projet. 
+
+```{r, eval = F}
+git init vrs25-phase1-aval
+```
+
+Git  crée alors un nouveau dépôt dans le répertoire à partir duquel nous avons exécuté la commande.
+On peut ensuite utiliser *cd* pour passer à ce nouveau dépôt.
+
+```{r, eval = F}
+cd vrs25-phase1-aval
+```
+
+On peut ensuite vérifier que le déopit a été correctement initialisé en exécutant *git status*
+
+```{r, eval = F}
+git status
+```
+
+***Convertir un projet en un dépôt***
+
+Disons qu'on a déjà commencé la production, on peut convertir le répertoire existant en un dépôt Git en exécutant *git init* sans fournir de nom de répertoire.
+
+```{r, eval = F}
+git init
+```
+
+Il faut exécuter la commande depuis notre répertoire de projet. La sortie confirmera qu'un repo vide a été créé et fournir l'emplacement.
+En faisant un *git status*, git reconnait qu'il y a des fichiers modifiés qui ne sont pas suivis. 
+
+
+*Remarque sur les dépôts imbriqués : à moins que l'on travaille sur un projet très complexe, il vaut mieux éviter de créer un repo git à l'intérieur d'un autre repo git (repo imbriqués).*
+
+
+## 1.3 Ajout et validation des fichiers (*staging* et *commit*)
+
+
+Nous allons maintenant nous intéresser au *workflow* pour mettre à jour et suivre nos fichiers à l'aide de Git.
+
+Le flux de travail Git comporte 3 étapes principales : 
+
+- L'édition et l'enregistrement d'un ou plusieurs fichiers sur notre ordinateur ;
+- Avec Git, ajout du ou des fichiers à une zone de préparation^[créée lorsqu'on initialise un repo Git ; elle garde une trace de ce qui a été modifié.] (*staging*) afin de suivre ce qui a été modifié ;
+- Validation/sauvegarde des fichiers en utilisant Git via un *commit*. Git prend un instantané des fichiers à un moment donné, ce qui nous permet ensuite de comparer et d'inverser les fichiers.
+
+
+On peut considérer l'ajout de fichiers à la zone de prépration (staging) comme le fait de placer une lettre dans une enveloppe. En revanche, commit, c'est comme mettre une enveloppe dans une boîte aux lettres. On peut ajouter plus de choses à l'enveloppe ou en retirer aussi souvent qu'on le souhaite. Mais une fois dans la boîte aux lettres, on ne peut plus y apporter de modifications.
+
+***Ajouter à la zone de staging***
+
+- Un seul fichier
+
+```{r, eval = F}
+git add README.md
+```
+
+- Ajout de tous les fichiers modifiés
+
+
+```{r, eval = F}
+git add .
+```
+
+Le *.* représente tous les fichiers du répertoire actuel et de ses sous-répertoires. 
+
+
+***Effectuer un commit***
+
+- Validation de notre brouillon de fichier en utilisant *git commit*. *-m* permet d'inclure un message de journal sur notre commit, en le plaçant entre guillemets. Si on écrit seulement *git commit*, un éditeur de texte s'ouvre, il faudrait alors ajouter un message, enregistrer le fichier pius quitter pour revenir au terminal. La meilleure pratique est de rester court et concis. 
+
+
+```{r, eval = F}
+git commit -m "Adding a README."
+```
+
+La sortie montre qu'un fichier a été modifié et comprend une série de caractères (hachage).
+
+
+
+# 2 Historique des versions
+
+## 2.1 Affichage de l'historique des versions
+
+***La structure d'un commit***
+
+Git stocke les données via des commit, qui comportent 3 parties : 
+
+- le commit lui-même : contient les métadonnées (auteur, message, heure de validation) ;
+- l'arbre : suit les noms et emplacements des fichiers et des répertoires lorsque cette validation s'est produite. C'est une sorte de dictionnaire, avec des clés représentées comme des identifiants uniques, associées à des fichiers ou répertoires ; 
+- les blobs (Binaire Large OBjet{{8}} - grand objet binaire) : un Blob pour chaque fichier dans l'arborescence, il peut contenir des données de toute nature ; c'est une sorte d'instantané compressé du contenu d'un fichier. 
+
+
+```{r,  include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"structure_commit.png"))
+```	
+
+***Hachage Git***
+
+- Générateur de nombres pseudo-aléatoires -- Fonction de hachage
+- Les hachages permettent le partage des données entre les repo : si deux fichiers sont identiques, alors leurs hachages sont identiques. Git n'a besoin que de comparer des hachages.
+
+Par conséquent, git peut dire quelles informations doivent être enregistrées, à quel endroit, en comparant les hachages plutôt que les fichiers entiers.
+
+On peut afficher les informations de validation à l'aide de la commande *git log*, affichant toutes les validations ajoutées au repo, dans l'ordre chronologique inverse, en commençant par le commit le plus récent.
+
+```{r, eval = F}
+git log
+
+```
+
+Il affichera le hachage de validation, l'auteur, la date et le message de validation. Si la sortie ne rentre pas dans la fenêtre du terminal, un *:* sera à la fin, indiquant plus de commits. On peut alors en voir plus en appuysant sur la barre espace " ". 
+
+Pour quitter le journal, on peut appuyer sur *q* et revenir au terminal.
+
+
+## 2.2 Trucs et astuces sur l'historique des versions
+
+On va maintenant s'intéresser à comment personnaliser le repo en fonction de nos besoins. 
+
+
+***Limiter le nombre de commits***
+
+Il existe quelques options pour personnaliser la sortie du journal git. 
+Déjà, on peut limiter le nombre de commits affichés en utilisant "*-*" suivi du nombre de commits à afficher.
+
+
+***Restreindre le fichier***
+
+
+Pour consulter l'historique des commits d'un seul fichier : 
+
+```{r, eval = F}
+
+git log report.md
+
+```
+
+En indiquant "report.md", on limite la sortie à l'historique de ce fichier. 
+
+
+***Combinaison de techniques***
+
+
+On peut aussi indiquer "-2" pour afficher les deux commits les plus récents. 
+
+```{r, eval = F}
+
+cd data
+
+git log -2 1.Import_nettoyage.Rmd
+
+```
+
+***Personnalisation de la plage de dates***
+
+On peut aussi filtrer en fonction de la date en utilisant *git log --since='Month Day Year'*  ou *git log --until='Month Day Year'*.
+
+
+Exemples : 
+
+```{r, eval = F}
+
+git log --since='Apr 2 2024'
+git log --since='Apr 2 2024' --until='Apr 10 2024'
+git log --since='yesterday'
+
+
+```
+
+```{r,  include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"format_dates.png"))
+```	
+
+
+***Recherche d'un commit en particulier***
+
+On peut rechercher un commit à partir du hachage, et en particulier les 8 premiers caractères.
+
+```{r, eval = F}
+
+git log
+git show c27fa856
+
+```
+
+La sortie de *show* affiche l'entrée de journal pour ce commit, suivie des changements entre le fichier de ce commit et la version actuelle dans le repo.
+
+
+
+## 2.3 Comparaison des versions
+
+Comme vu dans la section précédente, la sortie de *show* contient une section Diff. 
+
+
+```{r,  include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"git_show.png"))
+```	
+
+***Comparaison avec un fichier hors zone de staging***
+
+*get diff* permet de voir les différences entre les versions. 
+
+On peut alors comparer la dernière version validée avc la dernière version qui ne se trouve pas dans la zone de *staging* :
+
+```{r, eval = F}
+
+git diff report.md
+
+```
+
+La sortie affiche deux versions du rapport : A est la dernière version qui contient ce qui a été validé, et B est la version que nous devons encore ajouter à la zone de staging (la plus récente).
+
+La ligne entre *@@* nous indique ce qui a été changé entre les deux versions.
+
+
+```{r,  include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"git_diff.png"))
+```	
+
+
+Le -1,5 indique que la version A commence à la ligne 1 et comporte 5 lignes; et le +1,5 montre que la version B commence également à la ligne 1 et comporte 5 lignes.
+
+En rouge on voit ce qui a été supprimé de la version A, et en vert ce qui a été ajouté dans la version B.
+
+***Comparaison avec un fichier dans la zone de staging***
+
+On met en staging le fichier (git add), puis on peut comparer la dernière version validée de report.md avec la version située dans la zone de staging :
+
+```{r, eval = F}
+
+git add report.md
+
+git diff --staged report.md
+
+```
+
+***Comparaison de plusieurs fichiers mis en staging***
+
+Si on omet le nom du fichier, on obtient une comparaison de tous les fichiers mis en staging par rpaport à leurs dernières versions validées.
+
+```{r, eval = F}
+
+git diff --staged
+
+```
+
+***Comparaison de commits***
+
+On peut comparer via les hach (mettre en 2ème position le plus récent) : 
+
+```{r, eval = F}
+
+
+git log
+git diff 35f4b4d 186398gf
+
+```
+
+Sinon on peut utiliser *HEAD* qui peut être utilisé pour faire référence au commit le plus récent.
+
+Exemple - Comparaison de l'avant dernier commit avec le dernier commmit :
+
+```{r, eval = F}
+git diff HEAD~1 HEAD
+```
+
+
+```{r,  include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"git_diff_resume.png"))
+```	
+
+
+## 2.4 Restauration et inversion de fichiers
+
+Supposons qu'on ait modifié un fichier, qu'on l'ajoute à la zone de staging et qu'on a validé en commitant, et qu'on se rende compte que la dernière modification comporte une erreur de frappe. 
+On doit annuler les modifications les plus récentes, en restaurant le fichier à l'état antérieur au dernier commit.
+
+On utilise pour cela la commande *git revert*, qui rétablit les versions précédentes et crée un nouveau commit. Il restaure tous les fichiers mis à jour dans le commit donné.
+On doit fournir une référence (hachage ou HEAD) aux modifications qu'on veut annuler.
+
+Faire référence à *HEAD* signifie annuler les modifications apportées lors du dernier commit, tandis que *HEAD~1* annulerait ou rétablirait le deuxième commit le plus récent.
+
+En effectuant la commande suivante : 
+
+```{r, eval = F}
+git revert HEAD
+```
+
+Un éditeur de texte s'ouvre dans lequel on est invité à ajouter un message de validation. On peut sauvegarder et quitter en utilisant les commandes *Ctrl + 0*, puis entrer, et *Ctrl + X*
+En quittant l'éditeur de texte, on voit une sortie de terminal confirmant l'annulation, y compris le nombre de fichiers et de lignes qui ont été modifiés.
+
+Pour éviter que l'éditeur de texte ne s'ouvre, on peut ajouter *--no-edit*
+
+```{r, eval = F}
+git revert --no-edit HEAD
+```
+
+Si on veut revenir en arrière sans faire de validation à ce stade (pas de commit, ajout des fichiers dans la zone de staging), on peut utiliser *-n* (pour no commit) :
+
+```{r, eval = F}
+git revert -n HEAD
+```
+
+***Rétablir un fichier unique***
+
+*git revert* travaille sur les commits, pas sur les fichiers individuels.
+Pour rétablir un fichier unique, on peut utiliser *git checkout*. Il s'agit d'une commande polyvalente, qui dans ce scénario permet de vérifier un ou plusieurs fichiers à partir d'un commit spécifique, en utilisant le hachage ou la syntaxe head.
+
+```{r, eval = F}
+
+git checkout HEAD~1 -- report.md
+git status
+
+```
+
+Ici, on se réfère au deuxième commit le plus récent (avant dernier commit) et on s'intéresse uniquement au fichier .md. 
+
+On pourra vérifier la commande en effectuant *git status*, qui nous indiquera que le fichier est à un état précédent et se trouve dans la zone de staging. 
+
+On peut enfin commit.
+
+```{r, eval = F}
+
+git commit -m "Checkout previous version of report.md"
+
+```
+
+***Annulation du staging d'un fichier***
+
+Si on veut restaurer un fichier dans la zone de staging/préparation avant que la mise à jour soit validée, on doit supprimer ce fichier de la zone de staging, ou pour le dire autrement, le retirer de la zone de staging pour qu'il soit de retour dans le repo.
+
+On peut utiliser la commande *git restore --staged* suivi du nom du fichier :
+
+```{r, eval = F}
+git restore --staged summary.csv
+```
+
+Cela ramènera le fichier dans le répertoire de travail, nous permettant de le modifier avant de le réorganiser et de le valider. 
+
+```{r, eval =F}
+
+git add summary.csv
+git commit -m "adding age summary"
+
+```
+
+***Annulation du staging de tous les fichiers***
+
+On utilise la même commande mais sans spécifier de fichiers. 
+
+```{r, eval = F}
+git restore --staged
+```
+
+
+```{r,  include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"restauration.png"))
+```	
+
+
+Donc en gros : 
+
+- restore --staged : quand c'est en add;
+- revert : quand ça a été commit.
+
+# Récapitulatif
+
+
+```{r, include=TRUE,echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"recap1.png"))
+```	
+
+```{r, include=TRUE,echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"recap2.png"))
+```	
+
+

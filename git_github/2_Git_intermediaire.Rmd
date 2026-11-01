@@ -1,0 +1,449 @@
+---
+title: "Principes de bases de Git"
+subtitle: "Git intermédiaire"
+author : "Meyssa Beddar"
+output:
+  html_document:
+    code_folding: show
+    theme: flatly
+    toc: true
+    toc_depth: 4
+    toc_float:
+      collapsed: true
+toc-title: Table des matières
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T, warning = F, message = F)
+```
+
+```{r, echo = F}
+chemin_figures = "M:/ArboSSMSI/@Perso/Meyssa Beddar/Datacamp/Git_Github/figures"
+```
+
+
+\newpage
+
+# 1 Travailler avec les branches
+
+## 1.1 Introduction aux branches
+
+Les **branches** sont comme leurs propres versions de dépôts. Une branche, c'est une version individuelle d'un dépôt.
+Elles nous permettent d'avoir plusieurs versions de nos fichiers et de suivre chaque version systématiquement.
+
+Dans chaque branche : 
+
+* Certains fichiers peuvent être identiques 
+* D'autres peuvent être différents 
+* Certains peuvent ne pas exister
+
+Les branches sont essentielles pour le développement continu des logiciels. 
+
+Par défaut, chaque dépôt possède une branche appelée **main**. Généralement, c'est l'endroit où on stocke notre application de travail, avec tout ce qui fonctionne comme prévu.
+Dans une branche distincte, on peut développer et tester une nouvelle fonctionnalité. Pendant le développement, la nouvelle fonctionnalité peut ne pas fonctionner correctement, mais ça n'affectera pas le système en direct car il continue de fonctionner à partir de la branche principale.
+
+Pourquoi utiliser des branches :
+
+* plusieurs personnes peuvent travailler simultanément sur un projet ;
+* pour comparer l'état d'un dépôt entre les branches ;
+* combiner les contenus et intégrer les nouvelles fonctionnalités dans un système de production.
+
+Chaque branche doit avoir un objectif spécifique.
+
+
+```{r, include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"branches.png"))
+```	
+
+**Identification des branches**
+
+```{r, eval = F}
+git branch
+```
+
+La branche actuelle est celle précédée d'un asterisque `*` 
+
+**Passage d'une branche à l'autre**
+
+On utilise la commande `git switch` pour changer de branche + le nom de la branche d'intérêt 
+
+```{r, eval = F}
+git switch main
+```
+
+
+**Création d'une nouvelle branche**
+
+On utilise la commande `git branch` suivie du nom de la nouvelle branche
+
+```{r, eval = F}
+git branch test
+```
+
+On peut ensuite se déplacer dans cette branche 
+
+```{r, eval = F}
+git switch test 
+```
+
+Pour effectuer les deux en même temps, on effectue la commande `git switch -c` + le nom de la nouvelle branche :
+
+```{r, eval = F}
+git switch -c test
+```
+
+
+## 1.2 Modification et comparaison des branches
+
+**Comparaison de branches**
+
+Pour rappel, la commande `git diff` peut être utilisée pour comparer l'état des fichiers ou des dépôts à différents points dans le temps, comme entre deux commits, ou le dernier commit et la version dans la zone de staging.
+
+
+```{r, include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"git_diff_resume.png"))
+```	
+
+Mais `git diff` permet aussi de comparer deux branches : il suffit de lui indiquer les noms des deux branches qu'on souhaite comparer.
+
+```{r, eval = F}
+git diff main summary
+```
+
+Seulement ça peut produire des sorties très importantes. Pour naviguer dans la sortie, on utilise la barre d'espace ` `, et pour en sortir on utilise la touche `q`.
+
+**Modification de branches**
+
+Pour renommer une branche, on effectue la commande `git branch -m` + *anciennom* + *nouveaunom*
+
+```{r, eval = F}
+git branch -m feature app
+```
+
+Pour supprimer une branche, par exemple une fois qu'on en a fini avec, on utilise la commande `git branch -d` 
+
+```{r, eval  =F}
+git branch -d app
+```
+
+*Attention : Si app n'a pas été fusionné avec main, on obtiendra une erreur. Si on veut toujours la supprimer, on utilise -D plutôt que -d, mais il est très difficile de récupérer du contenu qui a été supprimé.*
+
+```{r, eval = F}
+git branch -D app
+```
+
+
+## 1.3 Fusion des branches
+
+Une fois l'objectif d'une branche terminé, on intègre les modifications dans la production (en général *main*).
+
+Lors de la fusion de deux branches : 
+
+* Les derniers commits de chaque branche sont appelés **commits parents**
+* `source` : c'est la branche **à partir de laquelle** on souahite effectuer la fusion
+* `destination` : c'est la branche **vers laquelle** on souhaite effectuer la fusion
+
+Pour effectuer la fusion, on doit d'abord se rendre dans la branche de destination via `git switch`, puis effectuer un `merge` 
+
+```{r, eval = F}
+git switch main
+git merge app
+```
+
+Sinon, on peut aussi effectuer la fusion à partir d'une autre branche, mais il faut alors spécifier les deux branches : `source` puis `destination`
+
+```{r, eval = F}
+git merge app main
+```
+
+**La sortie de la fusion de branches**
+
+La sortie fournit des informations clés sur ce qu'il s'est passé lors de la fusion :
+
+* les 7 premiers caractères des derniers hachages de validation de chaque branche en haut
+* le type de fusion^[il s'agit ici d'une fusion rapide, c'est-à-dire que l'histoirique des commits sur les deux branches est linéaire. Il existe d'autres types de fusion.]
+* le nombre de lignes modifiées (ajoutées ou supprimées) par fichier
+* les fichiers modifiés
+
+```{r, include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"sortie_fusion_branches.png"))
+```	
+
+
+# 2 Collaborer avec Git
+
+## 2.1 Conflits de fusion
+
+Un conflit est un scénario dans lequel Git est incapable de résoudre les différences de contenu d'un ou plusieurs fichiers entre les branches.
+Par exemple, si on édite le même fichier dans deux branches différentes et qu'on essaie de fusionner, Git ne saura pas quelle version doit être conservée.
+
+
+```{r, include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"conflit.png"))
+```	
+
+Une fois qu'on a corrigé le document qui posait conflit avec `nano fichier_conflit` puis avoir fait `Ctrl + O` puis `Entrée` puis `Ctrl + X` pour revenir au terminal, on peut fusionner à nouveau les branches
+
+```{r, eval = F}
+git add fichier_conflit
+git commit -m "resolution conflit fichier_conflit"
+git merge source
+```
+
+Conclusion : il faut éviter de modifier le même fichier sur des branches différentes !
+
+
+## 2.2 Présentation des dépôts distants
+
+Jusqu'à présent, on a travaillé avec des dépôts stockés dans notre ordinateur en local (dépôts locaux).
+Ils sont utiles si on travaille sur un projet en local, mais que faire si on doit collaborer avec des collègues ? Comment vont-ils accéder à nos repo ?
+
+> Dépôt distant
+
+Un **repo distant** (ou remote) est un repo stocké dans le cloud via un service d'hébergement de repo en ligne, tel que GitHub.
+
+Avantages : 
+
+* Tout est sauvegardé (utile en cas de panne d'ordinateur ou perte) ;
+* Collaboration quelque soit le lieu.
+
+
+**Clonage d'un dépôt**
+
+Nous pouvons aussi créer plusieurs copies (clonages) d’un dépôt sur notre ordinateur local ou notre réseau. On parle alors de *remotes* (dépôts distants) locaux. 
+C’est utile lorsque le stockage dans le cloud est interdit, par exemple dans des entreprises aux règles strictes de confidentialité des données. On crée une copie d’un dépôt avec la commande `git clone` suivie du chemin vers le dépôt du projet. 
+
+```{r, eval = F}
+git clone chemin_projet
+```
+
+Ici, on clone un projet local depuis home/meyssa/repo
+
+```{r, eval = F}
+git clone /home/meyssa/repo
+```
+
+On peut aussi donner un nom au repo cloné en le spécifiant après le chemin (new_repo)
+
+```{r, eval = F}
+git clone /home/meyssa/repo new_repo
+```
+
+
+**Clonage d'un dépôt distant**
+
+Même si des dépôts distants peuvent exister en local, on les héberge le plus souvent sur des services en ligne comme GitHub, Bitbucket ou GitLab. Si nous avons un compte GitHub, nous pouvons accéder à un dépôt distant hébergé chez eux en le clonant sur notre ordinateur. Pour cela, on utilise à nouveau la commande `git clone`, mais en fournissant cette fois une URL plutôt qu’un chemin local. 
+
+```{r, eval = F}
+git clone URL
+```
+
+**Identification d'un dépôt distant**
+
+Quand nous clonons un dépôt, Git mémorise l’emplacement du dépôt d’origine. Il le fait en enregistrant une étiquette remote (ou balise) dans la configuration du nouveau dépôt. Depuis un dépôt, nous pouvons afficher les remotes (dépôts distants) avec `git remote`. La sortie confirme que nous avons cloné le projet GitHub de datacamp.
+
+
+```{r, eval = F}
+git remote
+```
+
+**Récupération d'informations supplémentaires**
+
+Pour obtenir plus d'informations sur le ou les dépôts distants (URL distantes), on peut utiliser `-v`^[verbose] : 
+
+```{r, eval = F}
+git remote -v
+```
+
+On voit deux sorties : même URL mais soit *fetch* soit *pull* à la fin de leur ligne. 
+
+**Création d'un dépôt distant**
+
+Lors d’un clonage, Git nomme automatiquement le dépôt distant "origin". 
+
+Nous pouvons ajouter d’autres dépôts distants en indiquant le nom que Git doit leur attribuer. On utilise pour cela la commande `git remote add`, en fournissant deux informations : le nom que nous voulons donner au dépôt distant, et l’URL, ou le chemin du répertoire. 
+
+Ici, nous créons un dépôt distant appelé meyssa, qui pointe vers l’URL github.com/meyssa_datacamp/repo. Nommer le dépôt distant est pratique, car nous pourrons l’utiliser comme raccourci lors des fusions, au lieu de répéter l’URL ou le chemin. 
+
+
+```{r, eval = F}
+git remote add name URL
+```
+
+```{r, eval = F}
+git remote add meyssa https://github.com/meyssa_datacamp/repo
+```
+
+
+## 2.3 Extraction à partir de dépôts distants
+
+Nous avons vu comment cloner des dépôts distants, voyons maintenant comment récupérer du contenu d’un dépôt distant et le transférer vers notre dépôt local. 
+
+**Distance ou local**
+
+Imaginons que nous ayons travaillé dans notre dépôt local, tandis que d’autres ont travaillé sur le dépôt distant. Ici, on voit des fichiers et sous-répertoires supplémentaires dans le dépôt distant qui n’existent pas dans le dépôt local.
+
+Quand des membres d’une même équipe collaborent sur un projet, ils utilisent le dépôt distant, travaillent en local et synchronisent leurs changements entre les deux dépôts. Le dépôt distant doit donc servir de référence du projet, contenant les versions les plus récentes et finalisées des fichiers. 
+
+
+```{r, include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"ex_local_distant.png"))
+```	
+
+```{r, include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"collab.png"))
+```	
+
+**Récupération à partir d'un dépôt distant**
+
+
+Pour synchroniser les fichiers d’un dépôt distant vers un dépôt local, nous devons récupérer les branches depuis le dépôt distant. On le fait avec la commande `git fetch`, en indiquant le nom du dépôt distant. Ici, nous faisons un fetch depuis le dépôt distant origin. 
+
+On récupère alors toutes les branches du dépôt distant dans le dépôt local. 
+
+```{r, eval = F}
+git fetch origin
+```
+
+Si une branche n’existe que sur le dépôt distant, elle sera créée dans le dépôt local grâce à cette commande. Noter que cela ne fusionne pas le contenu du dépôt distant dans notre dépôt local. Nous verrons comment faire juste après. 
+
+Pour récupérer une branche en particulier, on utilise toujours la commande `git fetch` mais on indique après le nom distant.
+Par exemple, pour récupérer la branche main du repo origin, on effectue la commande suivante : 
+
+```{r, eval = F}
+git fetch origin main
+```
+
+ La sortie affiche l’URL ou le chemin de la source, la branche, et précise que l’on récupère le HEAD, c’est-à-dire le dernier commit. 
+
+
+**Synchronisation du contenu**
+
+Après `fetch`, nous devons synchroniser le contenu entre les dépôts distant et local. 
+
+Pour cela, nous effectuons une fusion du dépôt distant dans notre dépôt local. Si nous ne précisons pas de branche locale, la fusion se fera depuis la branche principale du dépôt distant vers la branche locale où nous nous trouvons. 
+
+La sortie est la même que lors de la fusion de deux branches locales, avec les hachages des commits parents, le type de fusion, et la liste des fichiers modifiés.
+
+* Fusion de la branche par défaut du dépôt `origin` (main) dans la branche actuelle du dépôt loca : 
+
+```{r, eval = F}
+git merge origin
+```
+
+**Extraction depuis un déopit distant**
+
+En cas de coopération entre équipes, la synchronisation entre dépôts distant et local est très courante. Pour simplifier cela, Git permet de récupérer et fusionner en une seule commande. On exécute `git pull` suivi du nom du dépôt distant, ce qui va récupérer la branche par défaut du dépôt distant, généralement *main*, puis la fusionner dans la branche locale courante. Ici, nous faisons un pull depuis origin vers notre branche locale actuelle. 
+
+```{r, eval = F}
+git pull origin
+```
+
+**Extraction d'une branche distante**
+
+Comme avec `git fetch`, on peut préciser la branche distante à récupérer en ajoutant son nom après celui du dépôt distant. 
+
+Ici, nous faisons un `pull` depuis la branche *dev* du distant. 
+***Cela fusionnera dans la branche locale où nous nous trouvons, donc mieux vaut basculer sur la branche locale dev avant d’exécuter cette commande ! ***
+Pou extraire la branche *dev* de *origin*, on exécute la commande suivante :
+
+```{r, eval = F}
+git pull origin dev
+```
+
+La sortie combine `git fetch` et `git merge`, ce qui est logique puisque `git pull` est un raccourci qui exécute ces deux commandes ! 
+
+**Mise en garde**
+
+À noter : si nous avons travaillé en local sans encore valider nos modifications, Git ne nous permettra pas de faire un pull depuis un dépôt distant. Il nous demande de valider nos changements et indique que la commande pull a été interrompue. Il est donc important d’enregistrer notre travail en local avant d’effectuer un pull depuis un dépôt distant. 
+
+
+Pour vérifier les différences entre le local et le distant, on peut utiliser par ex `git diff repo_distant branche_interet` pour comparer avec le local.
+
+## 2.4 Transfert vers des dépôts distants
+
+Nous savons effectuer des récupérations depuis un dépôt distant vers un dépôt local, mais comment envoyer nos modifications locales vers un dépôt distant ? 
+
+Pour rappel, nous utilisons git pull pour rapatrier le contenu d’un dépôt distant et le fusionner dans notre dépôt local.
+
+L’inverse de `pull`, c’est `push` : on envoie le contenu de notre dépôt local vers un dépôt distant. 
+
+
+```{r, include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"push_pull.png"))
+```	
+
+
+Comme pour récupérer du contenu depuis un dépôt distant, il faut d’abord **valider nos modifications locales** avant de pouvoir les envoyer. Une fois cela fait, on peut pousser vers un dépôt distant avec la commande `git push`, en lui donnant deux arguments :
+
+* D’abord le dépôt distant (ou remote),
+* la branche locale. 
+
+On effectue un psuh vers *remote* à partir de notre branche locale. 
+
+L’ordre du dépôt distant et de la branche locale est le même que pour git pull. On peut donc voir cela comme l’envoi du contenu de la branche locale vers le dépôt distant. Ici, nous poussons les changements vers origin depuis notre branche locale main. 
+
+```{r, eval = F}
+git push origin main
+```
+
+Par exemple pour pousser la branche locale "documentation" dans le repo distant origin,  il faut effectuer la commande suivante : 
+
+```{r, eval = F}
+git push origin documentation
+```
+
+**Flux de travail push/pull**
+
+Le flux de travail classique push/pull commence par récupérer (pull) le dépôt distant dans notre dépôt local. 
+
+Nous travaillons ensuite sur le projet en local. On valide ainsi nos changements progressivement. 
+
+Enfin, nous poussons notre dépôt local à jour vers le distant. Ce cycle se répète au fil du projet. 
+
+**Conflit à distance/local**
+
+Que se passe-t-il si l’on ne commence pas par récupérer depuis le dépôt distant ? 
+
+Ici, nous essayons de pousser le contenu de la branche main de notre dépôt local vers le dépôt distant. 
+Git nous affiche une longue sortie :
+
+* La première ligne indique l’URL du dépôt distant vers lequel nous essayons de pousser
+* Les deuxième et troisième lignes donnent le résultat de la commande : elle a été rejetée et a échoué. 
+* Entre la troisième et la septième ligne, Git fournit des indices. C’est là qu’il explique pourquoi la commande a échoué et recommande quoi faire pour résoudre le problème. Ici, on voit que la pointe, c’est-à-dire la fin, de notre branche actuelle est en retard par rapport à son équivalent distant, et la recommandation est de récupérer depuis le distant avant de tenter à nouveau de pousser nos changements locaux. Cela arrive souvent parce que, pendant que nous travaillions en local, nos collègues ont poussé leurs modifications sur le dépôt distant. Donc, si l’on ne commence pas par un pull, notre dépôt local ne sera pas synchronisé avec le distant. 
+
+```{r, include=TRUE, fig.align="center", echo=FALSE, fig.height=2}
+knitr::include_graphics(file.path(chemin_figures,"conflit_dist_loc.png"))
+```
+
+**Evitement d'un conflit**
+
+Nous avons vu précédemment que `git pull` pouvait faire une fusion en avance rapide. 
+
+Ici, c’est un peu différent : il y a des commits distincts en local et sur le distant, Git ne peut donc pas simplement les aligner. Il va utiliser une fusion récursive. Ainsi, quand nous essayons de récupérer, Git ouvre automatiquement l’éditeur de texte nano et nous demande d’ajouter un message de fusion. Nous laissons un message indiquant que nous tirons le dernier rapport depuis le dépôt distant, puis nous enregistrons et quittons nano. 
+
+**Transfert (push) dans une nouvelle branche locale**
+
+Et si nous avons une branche locale qui n’existe pas sur le dépôt distant ? 
+Nous pouvons quand même utiliser git push origin suivi du nom de notre branche locale  (ex : hotfix). Cela créera une nouvelle branche sur le dépôt distant avec le même nom.
+
+
+```{r, eval = F}
+git push origin hotfix
+```
+
+# Récapitulatif
+
+```{r, include = T, echo = F,  fig.height=2}
+knitr::include_graphics(file.path(chemin_figures, "recap21.png"))
+```
+
+```{r, echo = F}
+knitr::include_graphics(file.path(chemin_figures, "recap22.png"))
+```
+
+```{r, echo = F}
+knitr::include_graphics(file.path(chemin_figures, "recap23.png"))
+```
+
+
